@@ -1,0 +1,24 @@
+from flask import Flask
+
+from di.container import Container
+from web.route.auth_route import create_auth_blueprint
+from web.route.game_route import create_game_blueprint
+from web.route.user_route import create_user_blueprint
+
+
+def create_app(container: Container) -> Flask:
+    app = Flask(__name__)
+    app.register_blueprint(create_auth_blueprint(container)) # регистрация и вход пользователя
+    # signup -> создать нового пользователя
+    # login -> проверить учетные данные и вернуть user_id
+
+    app.register_blueprint(create_game_blueprint(container))  # создание, подключение и ведение партии
+    # games -> создать игру (с игроком или компьютером)
+    # games/available -> получить игры в ожидании второго игрока
+    # games/<game_id>/join -> присоединиться к игре как второй игрок
+    # games/<game_id>/move -> сделать ход и обновить состояние игры
+    # games/<game_id> -> получить текущее состояние игры
+
+    app.register_blueprint(create_user_blueprint(container)) # чтение публичной информации о пользователе
+    # /users/<user_id> -> получить пользователя по UUID
+    return app
